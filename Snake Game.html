@@ -1,0 +1,311 @@
+<html>
+<head>
+    <title>
+    Snake Game 
+    </title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style>
+div.ad { 
+  display: block;
+  border: 2px solid black;
+  height:504px;
+  width:504px;
+  background-color:black;
+margin-left: auto; 
+    margin-top: 50px;
+    margin-right: auto;
+    margin-bottom: auto;
+}
+</style>
+    </head>
+    <body id="ww" style="background-color:black"><div class="container" style="background-color:black"><br><br><div class="ad">
+    <canvas id="c1" style="border:2px solid white" width="500" height="500">
+        <script>
+            var ctx = document.getElementById("c1").getContext("2d");
+            ctx.save();
+ctx.font = "20px Calibri";
+ctx.fillStyle="White";
+            ctx.fillText("Click to start game",150,250);
+ctx.restore();
+            var W = 500;
+            var H = 500;
+            var snakelist,foodlist,direction,eat,e=1,score,r=0;
+            //ctx.fillText("ckdskdsc",100,200);
+            var snakebody = {
+                width:20,
+                height:20,
+                color:'magenta'//we create snakebody,food and /////////////////////////////////wallls named objects
+            };
+            var food = {
+                width:20,
+                height:20,
+                color:'orange'
+            };
+            var walls = {
+                width:80,
+                height:20,
+                color:'yellow'
+            };
+startGame = function(){
+            snakelist=[
+                {x:220,y:200},
+                {x:200,y:200},
+                {x:180,y:200}
+            ];
+            foodlist = [];
+            wall = [];
+            direction = 99;
+            eat = 1;
+            score = 0;
+            r = 1;
+            intvar = setInterval(updatesnakeposition,30); //This //is the function which calls the rest of the functions 
+      
+        }
+            document.getElementById('c1').onmousedown = function(){
+               if(r==1){
+                   clearInterval(intvar);
+                   r = 0; e=1;
+               } 
+                document.body.style.backgroundColor="black";
+                startGame();
+            }
+            document.onkeydown = function(event){
+
+                if(event.keyCode == 37 && direction != 2){
+                    direction = 0;
+                }
+                else if(event.keyCode == 38 && direction != 3){
+                    direction = 1;
+                }
+               else if(event.keyCode == 39 && direction != 0){
+                    direction = 2;
+                }
+                else if(event.keyCode == 40 && direction != 1){
+                    direction = 3;
+                }
+            }//this part takes care of the movement of the snake
+//if the snake is moving in left direstion it cant suddenly move /to right
+            testcollision = function(s,f){
+            return((s.x <= f.x + food.width) && (f.x <= s.x + snakebody.width) && (s.y <= f.y + food.height) && (f.y <= s.y + snakebody.height));
+            }//if the snake collides with food
+            
+            
+             testcollisionw = function(s,f){
+            return((s.x <= f.x + walls.width) && (f.x <= s.x + snakebody.width) && (s.y <= f.y + walls.height) && (f.y <= s.y + snakebody.height));//if the snake collides with walls or itself
+            }
+                         drawsnake = function(sb,i){
+                ctx.save();
+                if(i==0){ ctx.fillStyle='indigo';
+                        } else {
+                ctx.fillStyle = snakebody.color; }
+                ctx.fillRect(sb.x,sb.y,snakebody.width,snakebody.height);
+                ctx.restore();
+            }
+            drawfood = function(f1,i){
+                ctx.save();
+                ctx.fillStyle = food.color;
+                ctx.fillRect(f1.x,f1.y,food.width,food.height);
+                ctx.restore();
+            }
+             drawwall = function(f1,i){
+                ctx.save();
+                ctx.fillStyle = walls.color;
+                ctx.fillRect(f1.x,f1.y,walls.width,walls.height);
+                ctx.restore();
+            }
+            updatesnakelist = function(){
+                for(var i = snakelist.length-1; i>=0 ; i--){
+                    if(direction == 0 ){
+                        if(i==0){
+                            snakelist[i].x = snakelist[i].x - 5;
+                        }
+                      else{
+                          snakelist[i].x = snakelist[i-1].x;
+                          snakelist[i].y = snakelist[i-1].y;
+                      }  
+                    }
+                   else if(direction == 1){
+                        if(i==0){
+                            snakelist[i].y = snakelist[i].y - 5;
+                        }
+                      else{
+                          snakelist[i].x = snakelist[i-1].x;
+                          snakelist[i].y = snakelist[i-1].y;
+                      }
+                    }
+                    else if(direction == 2){
+                        if(i==0){
+                            snakelist[i].x = snakelist[i].x + 5;
+                        }
+                      else{
+                          snakelist[i].x = snakelist[i-1].x;
+                          snakelist[i].y = snakelist[i-1].y;
+                      }
+                    }
+                    else if(direction == 3){
+                        if(i==0){
+                            snakelist[i].y = snakelist[i].y + 5;
+                        }
+                      else{
+                          snakelist[i].x = snakelist[i-1].x;
+                          snakelist[i].y = snakelist[i-1].y;
+                      }
+                    }
+                }
+            }//this makes the snake move
+            checkposition = function(){
+                if(snakelist[0].x > 500)snakelist[0].x=0;
+                else if(snakelist[0].x < 0)snakelist[0].x=500;
+                else if(snakelist[0].y > 500)snakelist[0].y=0;
+                else if(snakelist[0].y < 0)snakelist[0].y=500;
+            }//if the snake goes up it will come back from the bottom
+            testcollsnake = function(snake1,snake2){
+                                      
+                return((
+                Math.abs(snake1.x-snake2.x)<5) &&
+                    (Math.abs(snake1.y-snake2.y)<5)
+                );
+                                      }//if the snake collides //with itself
+            gameover = function(){
+                for(i in snakelist){
+                    if(i==0)continue;
+                if(testcollsnake(snakelist[0],snakelist[i])){
+                  clearInterval(intvar); e=1;
+                  ctx.fillText("Game Over click to restart",140,250);//
+                    return;
+                }
+                }
+            } 
+            updatesnakeposition = function(){
+                ctx.clearRect(0,0,W,H);
+                var ppx1,ppx2,ppy1,ppy2;
+                while(eat){
+                    var px = Math.random()*485+5;
+                    var py = Math.random()*485+5;
+                    if(px==ppx1 || px==ppx2 || py==ppy2 || py==ppy1)
+//food or wall cant be same this checks that
+{
+                        continue;
+                    }
+                    else{
+                    foodlist[0]={x:px,y:py};
+                    }
+                     px = Math.random()*485+5;
+                     py = Math.random()*485+5;
+                    if(px==ppx1 || px==ppx2 || py==ppy2 || py==ppy1)
+//food or wall cant be same this checks that
+{
+                        continue;
+                    }
+                    else{
+                    foodlist[1]={x:px,y:py};
+                    }
+                    eat = 0;
+                }
+                   while(e){
+                    var px = Math.random()*485+5;
+                    var py = Math.random()*485+5;
+                    wall[0]={x:px,y:py};
+                    ppx1=px;
+                    ppy1=py;
+                 px = Math.random()*485+5;
+                 py = Math.random()*485+5;
+                      wall[1]={x:px,y:py};
+                     ppx2=px;
+                    ppy2=py;
+                    e = 0;
+                }
+                foodlist.forEach(drawfood);
+                
+                wall.forEach(drawwall);                for(var i = 0; i < snakelist.length;i++){
+               drawsnake(snakelist[i],i); } 
+                
+                if(testcollisionw(snakelist[0],wall[0])){
+                    clearInterval(intvar); e=1;
+                    ctx.font="20px Calibri";
+                    ctx.fillStyle="White";
+                    ctx.fillText("Game Over click to restart",140,250);
+                    return;
+                }
+                if(testcollisionw(snakelist[0],wall[1])){
+                    clearInterval(intvar); e=1;
+                    ctx.font="20px Calibri";
+                    ctx.fillStyle="White";
+                    ctx.fillText("Game Over click to restart",140,250);
+                    return;
+                }                if(testcollision(snakelist[0],foodlist[0])){
+                   foodlist = [];
+                    eat = 1;
+                    score= score+1;
+                    var nx,ny;
+                    
+                    if(direction == 0){
+                        nx = snakelist[0].x - 20;
+                        ny = snakelist[0].y;
+                    }
+                   else if(direction == 1){
+                        nx = snakelist[0].x;
+                        ny = snakelist[0].y - 20;
+                    }
+                    else if(direction == 2){
+                        nx = snakelist[0].x + 20;
+                        ny = snakelist[0].y;
+                    }
+                    else if(direction == 3){
+                        nx = snakelist[0].x;
+                        ny = snakelist[0].y + 20;
+                    }
+                    
+                    snakelist.unshift({x:nx,y:ny});
+                }
+                if(testcollision(snakelist[0],foodlist[1])){
+                   foodlist = [];
+                    eat = 1;
+                    score= score+1;
+                    var nx,ny;
+                    
+                    if(direction == 0){
+                        nx = snakelist[0].x - 20;
+                        ny = snakelist[0].y;
+                    }
+                   else if(direction == 1){
+                        nx = snakelist[0].x;
+                        ny = snakelist[0].y - 20;
+                    }
+                    else if(direction == 2){
+                        nx = snakelist[0].x + 20;
+                        ny = snakelist[0].y;
+                    }
+                    else if(direction == 3){
+                        nx = snakelist[0].x;
+                        ny = snakelist[0].y + 20;
+                    }
+                    
+                    snakelist.unshift({x:nx,y:ny});
+                }
+                ctx.font="20px Calibri";
+                ctx.fillStyle="White";
+                ctx.fillText("Score :" + score,420,30);
+                gameover();
+                checkposition();
+                
+                    updatesnakelist();
+            } 
+window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();//this does not let the game scroll up //down while playing 
+    }
+}, false);       
+        </script>
+        </canvas></div><br><br><br><br></div>
+    </body>
+    
+    
+    
+</html>
